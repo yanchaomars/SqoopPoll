@@ -1,3 +1,6 @@
 __author__ = 'blemall'
 
-oracle_append='sqoop import '
+# Load data from db to HDFS first
+
+
+# Load data from specified HDFS location to hive
