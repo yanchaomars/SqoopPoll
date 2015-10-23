@@ -7,4 +7,4 @@ code_dir = '/root/wuzhen'
 
 
 def deploy():
-    put('/home/blemall/IdeaProjects/SqoopPoll', code_dir)
+    put('/home/blemall/SqoopPoll', code_dir)
