@@ -3,7 +3,6 @@ __author__ = 'blemall'
 import os
 import conf_utils
 import commands
-import multiprocessing
 from log import Logger
 from multiprocessing.dummy import Pool as ThreadPool
 
@@ -31,22 +30,24 @@ def get_cmd(placeholder, table, sid=True):
 
 
 def get_cmds():
-    cmds = []
+    cmds = {}
     oracle_tables = get_lines('oracle.txt')
     mysql_tables = get_lines('mysql.txt')
     for t in oracle_tables:
         cmd = get_cmd(conf_utils.get_kv_from_conf("cmds", "oracle_to_hive"), t)
-        cmds.append(cmd)
+        cmds.__setitem__(t[7], cmd)
     for t in mysql_tables:
         cmd = get_cmd(conf_utils.get_kv_from_conf("cmds", "mysql_to_hive"), t, False)
-        cmds.append(cmd)
+        cmds.__setitem__(t[6], cmd)
     return cmds
 
 
 def exec_cmd(cmd):
-    Logger.info("Starting import...")
-    (status, text) = commands.getstatusoutput(cmd)
-    print(cmd)
+    table = cmd[0]
+    command = cmd[1]
+    print("Starting import " + table)
+    Logger.info("Starting import " + table)
+    (status, text) = commands.getstatusoutput(command)
     if status != 0:
         print('status: ' + str(status))
         Logger.info("End of import, status: " + str(status))
@@ -54,7 +55,7 @@ def exec_cmd(cmd):
 
 
 pool = ThreadPool(4)
-pool.imap(exec_cmd, get_cmds())
+pool.imap(exec_cmd, get_cmds().items())
 pool.close()
 pool.join()
 
