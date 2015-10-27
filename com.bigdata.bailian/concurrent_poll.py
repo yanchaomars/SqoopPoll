@@ -53,8 +53,7 @@ def exec_cmd(cmd):
         Logger.info("End of import, content: " + text)
 
 
-cpus = multiprocessing.cpu_count()
-pool = ThreadPool(cpus)
+pool = ThreadPool(4)
 pool.imap(exec_cmd, get_cmds())
 pool.close()
 pool.join()
